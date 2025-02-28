@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/imgAppIcon"
+        android:layout_width="@dimen/icon_width"
+        android:layout_height="@dimen/icon_height"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_icon"
+        android:paddingVertical="@dimen/vertical_space"
+        android:paddingStart="@dimen/horizontal_space"
+        android:paddingEnd="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/txtAppName"
+        style="@android:style/TextAppearance.Material.Medium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/horizontal_space"
+        android:paddingVertical="@dimen/vertical_space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgAppIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/txtPkgName"
+        style="@android:style/TextAppearance.Material.Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/horizontal_space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgAppIcon"
+        app:layout_constraintTop_toBottomOf="@id/txtAppName"
+        tools:text="@string/app_name" />
+</androidx.constraintlayout.widget.ConstraintLayout>

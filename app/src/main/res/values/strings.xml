@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MiniAppList</string>
+    <string name="app_icon">App Icon</string>
+    <string name="launch_app_exception">Unable to launch app: %1$s</string>
 </resources>
