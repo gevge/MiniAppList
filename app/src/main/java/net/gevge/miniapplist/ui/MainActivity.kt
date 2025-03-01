@@ -3,12 +3,14 @@ package net.gevge.miniapplist.ui
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,11 +24,14 @@ import net.gevge.miniapplist.data.AppLauncherData
 import net.gevge.miniapplist.vm.MainViewModel
 
 class MainActivity : AppCompatActivity() {
+    private val keySearchString = "KeySearchString"
     private val vm: MainViewModel by viewModels()
     private lateinit var launcherApps: LauncherApps
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var rvAppList: RecyclerView
+    private lateinit var editSearch: EditText
     private lateinit var adapter: AppListAdapter
+    private var searchFilter: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +44,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        savedInstanceState?.getString(keySearchString, null)?.let {
+            searchFilter = it
+        }
+
         rvAppList = findViewById(R.id.rvAppList)
+        editSearch = findViewById(R.id.editSearch)
         launcherApps = getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
         layoutManager = LinearLayoutManager(this)
         adapter = AppListAdapter(
@@ -47,7 +57,9 @@ class MainActivity : AppCompatActivity() {
                 override fun onClick(appLauncherData: AppLauncherData) {
                     try {
                         val intent =
-                            packageManager.getLaunchIntentForPackage(appLauncherData.launcherActivityInfo.applicationInfo.packageName)
+                            packageManager.getLaunchIntentForPackage(
+                                appLauncherData.launcherActivityInfo.applicationInfo.packageName
+                            )
                         startActivity(intent)
                     } catch (e: Exception) {
                         Toast.makeText(
@@ -68,6 +80,10 @@ class MainActivity : AppCompatActivity() {
         rvAppList.addItemDecoration(
             DividerItemDecoration(baseContext, layoutManager.orientation)
         )
+        editSearch.addTextChangedListener(afterTextChanged = {
+            searchFilter = it?.toString()
+            vm.searchApp(searchFilter)
+        })
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -89,6 +105,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        vm.initAppList(launcherApps, packageManager)
+        vm.initAppList(launcherApps, packageManager, searchFilter)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(keySearchString, searchFilter)
+        super.onSaveInstanceState(outState)
     }
 }

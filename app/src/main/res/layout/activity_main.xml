@@ -14,6 +14,15 @@
         android:layout_height="wrap_content"
         app:title="@string/app_name" />
 
+    <EditText
+        android:id="@+id/editSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/horizontal_space"
+        android:hint="@string/search_hint"
+        android:importantForAutofill="no"
+        android:inputType="textNoSuggestions" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAppList"
         android:layout_width="match_parent"

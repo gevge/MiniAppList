@@ -27,7 +27,7 @@ class MainViewModel : ViewModel() {
         _refresh.emit(refreshCount++)
     }
 
-    fun initAppList(launcherApps: LauncherApps, pm: PackageManager) =
+    fun initAppList(launcherApps: LauncherApps, pm: PackageManager, filter: String?) =
         viewModelScope.launch(Dispatchers.Default) {
             val result = ArrayList<AppLauncherData>()
             for (activityInfo in launcherApps.getActivityList(null, Process.myUserHandle())) {
@@ -50,8 +50,21 @@ class MainViewModel : ViewModel() {
                     activityInfo.componentName.toShortString(),
                     appLauncherData
                 )
-                result.add(appLauncherData)
+                if (filter.isNullOrEmpty() || appLauncherData.name.contains(filter, true)) {
+                    result.add(appLauncherData)
+                }
             }
             _uiAppList.emit(result)
         }
+
+    fun searchApp(filter: String?) = viewModelScope.launch(Dispatchers.Default) {
+        val result = ArrayList<AppLauncherData>()
+        for (i in 0 until appLauncherDataCache.size()) {
+            val app = appLauncherDataCache.valueAt(i)
+            if (filter.isNullOrEmpty() || app.name.contains(filter, true)) {
+                result.add(app)
+            }
+        }
+        _uiAppList.emit(result)
+    }
 }
