@@ -29,7 +29,7 @@ class MainViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.De
     private var refreshCount = -1
 
     fun getIcon(appLauncherData: AppLauncherData) = viewModelScope.launch(dispatcher) {
-        val drawable = appLauncherData.launcherActivityInfo.getIcon(128)
+        val drawable = appLauncherData.launcherActivityInfo.getIcon(0)
         appLauncherData.icon = drawable
         _refresh.emit(refreshCount++)
     }
