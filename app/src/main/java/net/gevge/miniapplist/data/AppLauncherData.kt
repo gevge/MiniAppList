@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 
 data class AppLauncherData(
     var name: String,
-    var lastUpdatedTime: Long,
+    var snapshotTime: Long,
     var launcherActivityInfo: LauncherActivityInfo,
     var icon: Drawable?,
     var isRefreshPending: Boolean = false

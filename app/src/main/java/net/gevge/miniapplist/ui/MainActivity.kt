@@ -1,6 +1,12 @@
 package net.gevge.miniapplist.ui
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.ACTION_PACKAGE_ADDED
+import android.content.Intent.ACTION_PACKAGE_CHANGED
+import android.content.Intent.ACTION_PACKAGE_FULLY_REMOVED
+import android.content.Intent.ACTION_PACKAGE_REMOVED
+import android.content.IntentFilter
 import android.content.pm.LauncherApps
 import android.os.Bundle
 import android.widget.EditText
@@ -8,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
@@ -21,9 +28,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.gevge.miniapplist.R
 import net.gevge.miniapplist.data.AppLauncherData
+import net.gevge.miniapplist.receiver.PackageStateReceiver
 import net.gevge.miniapplist.vm.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateChangedListener {
     private val keySearchString = "KeySearchString"
     private val vm: MainViewModel by viewModels()
     private lateinit var launcherApps: LauncherApps
@@ -31,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvAppList: RecyclerView
     private lateinit var editSearch: EditText
     private lateinit var adapter: AppListAdapter
+    private lateinit var pkgStsReceiver: PackageStateReceiver
     private var searchFilter: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,11 +114,34 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        vm.initAppList(launcherApps, packageManager, searchFilter)
+        vm.initAppList(launcherApps, searchFilter)
+
+        pkgStsReceiver = PackageStateReceiver(this)
+        val filter = IntentFilter(ACTION_PACKAGE_ADDED).apply {
+            addAction(ACTION_PACKAGE_CHANGED)
+            addAction(ACTION_PACKAGE_FULLY_REMOVED)
+            addAction(ACTION_PACKAGE_REMOVED)
+            addDataScheme("package")
+        }
+        ContextCompat.registerReceiver(
+            this,
+            pkgStsReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(pkgStsReceiver)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(keySearchString, searchFilter)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onPackageStateChanged(intent: Intent) {
+        vm.onPkgStateChanged(launcherApps, searchFilter, intent)
     }
 }

@@ -37,7 +37,7 @@ class AppListAdapter(
         }
 
         override fun areContentsTheSame(oldItem: AppLauncherData, newItem: AppLauncherData): Boolean {
-            return oldItem.lastUpdatedTime == newItem.lastUpdatedTime
+            return oldItem.snapshotTime == newItem.snapshotTime
         }
     }
 
