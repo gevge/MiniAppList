@@ -16,6 +16,8 @@ class AppListAdapter(
     private val iconCallback: IconLoadCallback
 ) :
     ListAdapter<AppLauncherData, AppListAdapter.AppInfoHolder>(DiffCallback()) {
+    var isShowIcon = false
+
     interface ClickListener {
         fun onClick(appLauncherData: AppLauncherData)
     }
@@ -57,16 +59,20 @@ class AppListAdapter(
         holder.txtAppName.text = item.name
         val packageName = item.launcherActivityInfo.applicationInfo.packageName
         holder.txtPkgName.text = packageName
-        if (item.icon != null) {
-            item.isRefreshPending = false
-            holder.imgIcon.setImageDrawable(item.icon)
-        } else {
-            item.isRefreshPending = true
-            holder.imgIcon.setImageDrawable(null)
-            iconCallback.onLoadIcon(item)
-        }
-        if (holder.imgIcon.visibility != View.VISIBLE) {
-            holder.imgIcon.visibility = View.VISIBLE
+        if (isShowIcon) {
+            if (item.icon != null) {
+                item.isRefreshPending = false
+                holder.imgIcon.setImageDrawable(item.icon)
+            } else {
+                item.isRefreshPending = true
+                holder.imgIcon.setImageDrawable(null)
+                iconCallback.onLoadIcon(item)
+            }
+            if (holder.imgIcon.visibility != View.VISIBLE) {
+                holder.imgIcon.visibility = View.VISIBLE
+            }
+        } else if (holder.imgIcon.visibility != View.GONE) {
+            holder.imgIcon.visibility = View.GONE
         }
     }
 

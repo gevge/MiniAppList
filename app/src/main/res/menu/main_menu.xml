@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_icon_visibility"
+        android:contentDescription="@string/icon_visibility_hint"
+        android:icon="@drawable/ic_hide_image_24px"
+        android:title="@string/icon_visibility_hint"
+        app:showAsAction="ifRoom" />
+</menu>

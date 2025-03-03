@@ -9,6 +9,9 @@ import android.content.Intent.ACTION_PACKAGE_REMOVED
 import android.content.IntentFilter
 import android.content.pm.LauncherApps
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -30,8 +33,11 @@ import net.gevge.miniapplist.R
 import net.gevge.miniapplist.data.AppLauncherData
 import net.gevge.miniapplist.receiver.PackageStateReceiver
 import net.gevge.miniapplist.vm.MainViewModel
+import kotlin.math.max
+import kotlin.math.min
 
 class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateChangedListener {
+    private val iconVisibility = "iconVisibility"
     private val keySearchString = "KeySearchString"
     private val vm: MainViewModel by viewModels()
     private lateinit var launcherApps: LauncherApps
@@ -84,6 +90,9 @@ class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateCha
                 }
             }
         )
+        if (getPreferences(Context.MODE_PRIVATE).getBoolean(iconVisibility, false)) {
+            adapter.isShowIcon = true
+        }
         rvAppList.layoutManager = layoutManager
         rvAppList.adapter = adapter
         rvAppList.addItemDecoration(
@@ -131,6 +140,12 @@ class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateCha
         )
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(pkgStsReceiver)
@@ -139,6 +154,24 @@ class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateCha
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(keySearchString, searchFilter)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.item_icon_visibility) {
+            adapter.isShowIcon = !adapter.isShowIcon
+            var first = layoutManager.findFirstVisibleItemPosition()
+            var last = layoutManager.findLastVisibleItemPosition()
+            /*
+            * ItemView height may change after icon visibility changed. Update 2 more items at both ends.
+            */
+            first = max(0, first - 2)
+            last = min(adapter.itemCount - 1, last + 2)
+            adapter.notifyItemRangeChanged(first, last - first + 1)
+            item.setIcon(if (adapter.isShowIcon) R.drawable.ic_image_24px else R.drawable.ic_hide_image_24px)
+            getPreferences(Context.MODE_PRIVATE).edit()
+                .putBoolean(iconVisibility, adapter.isShowIcon).apply()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onPackageStateChanged(intent: Intent) {

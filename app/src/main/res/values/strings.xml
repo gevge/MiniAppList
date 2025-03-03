@@ -3,4 +3,5 @@
     <string name="app_icon">App Icon</string>
     <string name="launch_app_exception">Unable to launch app: %1$s</string>
     <string name="search_hint">Search for app …</string>
+    <string name="icon_visibility_hint">Show / hide app icons</string>
 </resources>
