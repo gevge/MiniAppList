@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import net.gevge.miniapplist.BuildConfig
 import net.gevge.miniapplist.data.AppLauncherData
 
 class MainViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.Default) :
@@ -37,6 +38,9 @@ class MainViewModel(private val dispatcher: CoroutineDispatcher = Dispatchers.De
         viewModelScope.launch(dispatcher) {
             val result = ArrayList<AppLauncherData>()
             for (activityInfo in launcherApps.getActivityList(null, Process.myUserHandle())) {
+                if (activityInfo.applicationInfo.packageName == BuildConfig.APPLICATION_ID) {
+                    continue
+                }
                 val appLauncherData = AppLauncherData(
                     activityInfo.label.toString(),
                     System.currentTimeMillis(),
