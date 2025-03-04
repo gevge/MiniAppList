@@ -143,6 +143,9 @@ class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateCha
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
+        if (getPreferences(Context.MODE_PRIVATE).getBoolean(iconVisibility, false)) {
+            menu?.findItem(R.id.item_icon_visibility)?.setIcon(R.drawable.ic_image_24px)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
