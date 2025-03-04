@@ -71,10 +71,9 @@ class MainActivity : AppCompatActivity(), PackageStateReceiver.OnPackageStateCha
             object : AppListAdapter.ClickListener {
                 override fun onClick(appLauncherData: AppLauncherData) {
                     try {
-                        val intent =
-                            packageManager.getLaunchIntentForPackage(
-                                appLauncherData.launcherActivityInfo.applicationInfo.packageName
-                            )
+                        val intent = packageManager.getLaunchIntentForPackage(
+                            appLauncherData.launcherActivityInfo.applicationInfo.packageName
+                        )?.setComponent(appLauncherData.launcherActivityInfo.componentName)
                         startActivity(intent)
                     } catch (e: Exception) {
                         Toast.makeText(
