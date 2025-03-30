@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MiniAppList</string>
+    <string name="app_icon">應用程式圖示</string>
+    <string name="launch_app_exception">無法開啟應用程式: %1$s</string>
+    <string name="search_hint">搜尋應用程式 …</string>
+    <string name="icon_visibility_hint">顯示 / 隱藏應用程式圖示</string>
+</resources>
